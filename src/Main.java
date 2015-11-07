@@ -10,6 +10,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -43,22 +44,18 @@ public class Main {
 					int flag = ss.indexOf(">=");
 					String key = ss.substring(1, flag);
 					String val = ss.substring(flag+2, ss.length());
-					//System.out.println(key + "," + val);
 					Document d = (Document) doc.get(doc.size()-1);
 					d.add(new Field(key, val, Field.Store.YES, Field.Index.ANALYZED));
 				}
 			}
-			Document dd = new Document();
-			dd.add(new Field("CN", "11-3928/TN", Field.Store.YES, Field.Index.ANALYZED));
-			dd.add(new Field("中文刊名", "hahaha", Field.Store.YES, Field.Index.ANALYZED));
-			writer.addDocument(dd);
 			writer.close();
 			System.out.println("Index finish!");
-		
-			IndexSearcher searcher = new IndexSearcher(dir);
-			Term t = new Term("CN", "11-3928/TN");
-			Query q = new TermQuery(t);
+			//构建query
+			QueryParser parser = new QueryParser(Version.LUCENE_35, "篇名", new StandardAnalyzer(Version.LUCENE_35));
+			Query q = parser.parse("浙江的资本盛世");
 			System.out.println(q);
+			//开始查询
+			IndexSearcher searcher = new IndexSearcher(dir);
 			TopDocs td = searcher.search(q, null, 100);
 			int hitnum = td.totalHits;
 			System.out.println(hitnum);
