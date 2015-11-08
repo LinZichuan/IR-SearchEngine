@@ -64,7 +64,7 @@ public class Main {
 			System.out.println("Index finish!");
 			//构建query
 			QueryParser parser = new QueryParser(Version.LUCENE_35, "作者", new StandardAnalyzer(Version.LUCENE_35));
-			Query q = parser.parse("叶丽雅");
+			Query q = parser.parse("创业");
 			System.out.println(q);
 			//开始查询
 			IndexSearcher searcher = new IndexSearcher(dir);
@@ -74,7 +74,7 @@ public class Main {
 			ScoreDoc[] hits = td.scoreDocs;
 			for (int i = 0 ; i < hits.length; ++i) {
 				Document hitdoc = searcher.doc(hits[i].doc);
-				System.out.println(hitdoc.getField("篇名").stringValue());
+				System.out.println(hitdoc.getField("作者").stringValue());
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
