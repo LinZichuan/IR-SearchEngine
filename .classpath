@@ -6,11 +6,11 @@
 	<classpathentry kind="lib" path="/Users/linzichuan/Study/大四上/IR/大作业/lucene-3.5.0/lucene-test-framework-3.5.0-javadoc.jar"/>
 	<classpathentry kind="lib" path="/Users/linzichuan/Study/大四上/IR/大作业/lucene-3.5.0/lucene-test-framework-3.5.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0"/>
+	<classpathentry kind="lib" path="/Users/linzichuan/Downloads/IKAnalyzer2012_u6/IKAnalyzer2012_u6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/linzichuan/Downloads/IKAnalyzer2012_u6/IKAnalyzer2012_u6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
