@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 public class Main extends HttpServlet{
 	static private File datadir;
 	static private Directory dir;
+	static private MySimilarity similarity;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		System.out.println("haha");
 		String input = request.getParameter("keyword");
@@ -44,6 +45,7 @@ public class Main extends HttpServlet{
 	public static void EstablishIndex(Analyzer analyzer) {
 		try{
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
+			writer.setSimilarity(similarity);   //设置相关度  
 			//构建Document并写入IndexWriter
 			File srcfile = new File("./data/CNKI_journal.txt");
 			StringBuffer buffer = new StringBuffer();
@@ -88,6 +90,7 @@ public class Main extends HttpServlet{
 		try{
 			datadir = new File("./data/index/");
 			dir = FSDirectory.open(datadir);
+			similarity = new MySimilarity();
 			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
 			//EstablishIndex(analyzer);
 			//构建query
@@ -109,6 +112,7 @@ public class Main extends HttpServlet{
 			System.out.println(q);
 			//开始查询
 			IndexSearcher searcher = new IndexSearcher(dir);
+			searcher.setSimilarity(similarity); 
 			TopDocs td = searcher.search(q, null, 100);
 			int hitnum = td.totalHits;
 			System.out.println(hitnum);
@@ -116,7 +120,10 @@ public class Main extends HttpServlet{
 			for (int i = 0 ; i < hits.length; ++i) {
 				Document hitdoc = searcher.doc(hits[i].doc);
 				if (hitdoc.getField("作者") != null && hitdoc.getField("篇名") != null) {
-					System.out.println("作者："+hitdoc.getField("作者").stringValue() + " 篇名："+hitdoc.getField("篇名").stringValue());
+					System.out.println("作者：" + hitdoc.getField("作者").stringValue() 
+							+ " 篇名：" + hitdoc.getField("篇名").stringValue() 
+							+ " score=" + hits[i].score 
+							+ " docId=" + hits[i].doc);
 				}
 			}
 		}catch(Exception e) {
