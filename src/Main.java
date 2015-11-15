@@ -80,9 +80,15 @@ public class Main extends HttpServlet{
 			writer.close();
 			System.out.println("Index finish!");*/
 			//构建query
-			Query q1 = new TermQuery(new Term("作者", "叶丽雅"));
-			Query q2 = new TermQuery(new Term("篇名", "浙江"));
-			Query q3 = new TermQuery(new Term("年", "2008"));
+			//Query q1 = new TermQuery(new Term("作者", "叶丽雅"));
+			QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", new IKAnalyzer());
+			Query q1 = qp1.parse("叶丽雅");
+			//Query q2 = new TermQuery(new Term("篇名", "浙江"));
+			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", new IKAnalyzer());
+			Query q2 = qp2.parse("浙江");
+			//Query q3 = new TermQuery(new Term("年", "2008"));
+			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", new IKAnalyzer());
+			Query q3 = qp3.parse("2008");
 			BooleanQuery q = new BooleanQuery();
 			q.add(q1, Occur.MUST);
 			q.add(q2, Occur.MUST);
