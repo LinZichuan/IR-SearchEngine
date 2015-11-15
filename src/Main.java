@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -32,18 +34,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class Main extends HttpServlet{
-	
+	static private File datadir;
+	static private Directory dir;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		System.out.println("haha");
 		String input = request.getParameter("keyword");
 		System.out.println(input);
 	}
-	public static void main(String []args) {
-		System.out.println("Start!");
+	public static void EstablishIndex(Analyzer analyzer) {
 		try{
-			File datadir = new File("./data/index/");
-			Directory dir = FSDirectory.open(datadir);
-			/*IndexWriter writer = new IndexWriter(dir, new IKAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
 			//构建Document并写入IndexWriter
 			File srcfile = new File("./data/CNKI_journal.txt");
 			StringBuffer buffer = new StringBuffer();
@@ -78,16 +78,27 @@ public class Main extends HttpServlet{
 				}
 			}
 			writer.close();
-			System.out.println("Index finish!");*/
+			System.out.println("Index finish!");
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public static void main(String []args) {
+		System.out.println("Start!");
+		try{
+			datadir = new File("./data/index/");
+			dir = FSDirectory.open(datadir);
+			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
+			//EstablishIndex(analyzer);
 			//构建query
 			//Query q1 = new TermQuery(new Term("作者", "叶丽雅"));
-			QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", new IKAnalyzer());
+			QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", analyzer);
 			Query q1 = qp1.parse("叶丽雅");
 			//Query q2 = new TermQuery(new Term("篇名", "浙江"));
-			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", new IKAnalyzer());
+			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", analyzer);
 			Query q2 = qp2.parse("浙江");
 			//Query q3 = new TermQuery(new Term("年", "2008"));
-			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", new IKAnalyzer());
+			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
 			Query q3 = qp3.parse("2008");
 			BooleanQuery q = new BooleanQuery();
 			q.add(q1, Occur.MUST);
@@ -104,11 +115,8 @@ public class Main extends HttpServlet{
 			ScoreDoc[] hits = td.scoreDocs;
 			for (int i = 0 ; i < hits.length; ++i) {
 				Document hitdoc = searcher.doc(hits[i].doc);
-				if (hitdoc.getField("作者") != null) {
-					System.out.println("作者："+hitdoc.getField("作者").stringValue());
-				}
-				if (hitdoc.getField("篇名") != null) {
-					System.out.println("篇名："+hitdoc.getField("篇名").stringValue());
+				if (hitdoc.getField("作者") != null && hitdoc.getField("篇名") != null) {
+					System.out.println("作者："+hitdoc.getField("作者").stringValue() + " 篇名："+hitdoc.getField("篇名").stringValue());
 				}
 			}
 		}catch(Exception e) {
