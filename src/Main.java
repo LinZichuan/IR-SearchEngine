@@ -14,6 +14,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -41,7 +43,7 @@ public class Main extends HttpServlet{
 		try{
 			File datadir = new File("./data/index/");
 			Directory dir = FSDirectory.open(datadir);
-			IndexWriter writer = new IndexWriter(dir, new IKAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
+			/*IndexWriter writer = new IndexWriter(dir, new IKAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
 			//构建Document并写入IndexWriter
 			File srcfile = new File("./data/CNKI_journal.txt");
 			StringBuffer buffer = new StringBuffer();
@@ -76,10 +78,17 @@ public class Main extends HttpServlet{
 				}
 			}
 			writer.close();
-			System.out.println("Index finish!");
+			System.out.println("Index finish!");*/
 			//构建query
-			QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, new String[]{"作者", "篇名"}, new IKAnalyzer());
-			Query q = parser.parse("创业");
+			Query q1 = new TermQuery(new Term("作者", "叶丽雅"));
+			Query q2 = new TermQuery(new Term("篇名", "浙江"));
+			Query q3 = new TermQuery(new Term("年", "2008"));
+			BooleanQuery q = new BooleanQuery();
+			q.add(q1, Occur.MUST);
+			q.add(q2, Occur.MUST);
+			q.add(q3, Occur.MUST);
+			//QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, new String[]{"作者", "篇名"}, new IKAnalyzer());
+			//Query q = parser.parse("创业");
 			System.out.println(q);
 			//开始查询
 			IndexSearcher searcher = new IndexSearcher(dir);
@@ -89,8 +98,12 @@ public class Main extends HttpServlet{
 			ScoreDoc[] hits = td.scoreDocs;
 			for (int i = 0 ; i < hits.length; ++i) {
 				Document hitdoc = searcher.doc(hits[i].doc);
-				if (hitdoc.getField("篇名") != null)
-					System.out.println(hitdoc.getField("篇名").stringValue());
+				if (hitdoc.getField("作者") != null) {
+					System.out.println("作者："+hitdoc.getField("作者").stringValue());
+				}
+				if (hitdoc.getField("篇名") != null) {
+					System.out.println("篇名："+hitdoc.getField("篇名").stringValue());
+				}
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
