@@ -78,6 +78,7 @@ public class Main extends HttpServlet{
 					Document d = (Document) doc.get(doc.size()-1);
 					if (key.equals("作者")) {
 						String[] authors = val.split(";");
+						d.add(new Field(key, val, Field.Store.YES, Field.Index.NOT_ANALYZED));
 						for (String author: authors) {
 							d.add(new Field(key, author, Field.Store.YES, Field.Index.NOT_ANALYZED));
 						}
@@ -127,7 +128,8 @@ public class Main extends HttpServlet{
 			for (int i = 0 ; i < hits.length; ++i) {
 				Document hitdoc = searcher.doc(hits[i].doc);
 				if (hitdoc.getField("作者") != null && hitdoc.getField("篇名") != null) {
-					System.out.println("作者：" + hitdoc.getField("作者").stringValue() 
+					System.out.println("作者：" + hitdoc.getField("作者").stringValue()
+							+ " 机构：" + hitdoc.getField("机构").stringValue()
 							+ " 篇名：" + hitdoc.getField("篇名").stringValue() 
 							+ " score=" + hits[i].score 
 							+ " docId=" + hits[i].doc);
