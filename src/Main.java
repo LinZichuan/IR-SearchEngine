@@ -76,9 +76,9 @@ public class Main extends HttpServlet{
 					String key = ss.substring(1, flag);
 					String val = ss.substring(flag+2, ss.length());
 					Document d = (Document) doc.get(doc.size()-1);
-					if (key.equals("作者")) {
+					if (key.equals("作者")) {  //作者字段按分号分词
 						String[] authors = val.split(";");
-						d.add(new Field(key, val, Field.Store.YES, Field.Index.NOT_ANALYZED));
+						d.add(new Field(key, val, Field.Store.YES, Field.Index.NOT_ANALYZED));  //设置val为key"name"的val值
 						for (String author: authors) {
 							d.add(new Field(key, author, Field.Store.YES, Field.Index.NOT_ANALYZED));
 						}
@@ -102,7 +102,8 @@ public class Main extends HttpServlet{
 			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
 			//EstablishIndex(analyzer);
 			//构建query
-			Query q1 = new TermQuery(new Term("作者", "田海霞"));
+			String author = new String("田海霞     ").trim();
+			Query q1 = new TermQuery(new Term("作者", author));
 			//QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", analyzer);
 			//Query q1 = qp1.parse("叶丽雅");
 			//Query q2 = new TermQuery(new Term("篇名", "浙江"));
@@ -111,6 +112,7 @@ public class Main extends HttpServlet{
 			//Query q3 = new TermQuery(new Term("年", "2008"));
 			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
 			Query q3 = qp3.parse("2008");
+			
 			BooleanQuery q = new BooleanQuery();
 			q.add(q1, Occur.MUST);
 			q.add(q2, Occur.MUST);
