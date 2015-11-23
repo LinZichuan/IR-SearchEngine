@@ -45,7 +45,7 @@ public class Main extends HttpServlet{
 	public static void EstablishIndex(Analyzer analyzer) {
 		try{
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.setSimilarity(similarity);   //设置相关度  
+			//writer.setSimilarity(similarity);   //设置相关度  
 			//构建Document并写入IndexWriter
 			File srcfile = new File("./data/CNKI_journal.txt");
 			StringBuffer buffer = new StringBuffer();
@@ -76,7 +76,14 @@ public class Main extends HttpServlet{
 					String key = ss.substring(1, flag);
 					String val = ss.substring(flag+2, ss.length());
 					Document d = (Document) doc.get(doc.size()-1);
-					d.add(new Field(key, val, Field.Store.YES, Field.Index.ANALYZED));
+					if (key.equals("作者")) {
+						String[] authors = val.split(";");
+						for (String author: authors) {
+							d.add(new Field(key, author, Field.Store.YES, Field.Index.NOT_ANALYZED));
+						}
+					} else {
+						d.add(new Field(key, val, Field.Store.YES, Field.Index.ANALYZED));
+					}
 				}
 			}
 			writer.close();
@@ -94,12 +101,12 @@ public class Main extends HttpServlet{
 			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
 			//EstablishIndex(analyzer);
 			//构建query
-			//Query q1 = new TermQuery(new Term("作者", "叶丽雅"));
-			QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", analyzer);
-			Query q1 = qp1.parse("叶丽雅");
+			Query q1 = new TermQuery(new Term("作者", "田海霞"));
+			//QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", analyzer);
+			//Query q1 = qp1.parse("叶丽雅");
 			//Query q2 = new TermQuery(new Term("篇名", "浙江"));
 			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", analyzer);
-			Query q2 = qp2.parse("浙江");
+			Query q2 = qp2.parse("应用");
 			//Query q3 = new TermQuery(new Term("年", "2008"));
 			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
 			Query q3 = qp3.parse("2008");
