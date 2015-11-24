@@ -102,21 +102,18 @@ public class Main extends HttpServlet{
 			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
 			//EstablishIndex(analyzer);
 			//构建query
-			String author = new String("田海霞     ").trim();
+			String author = new String("张晓东      ").trim();
+			String papername = new String("应用    ").trim();
+			String year = new String("  2008        ").trim();
 			Query q1 = new TermQuery(new Term("作者", author));
-			//QueryParser qp1 = new QueryParser(Version.LUCENE_35, "作者", analyzer);
-			//Query q1 = qp1.parse("叶丽雅");
-			//Query q2 = new TermQuery(new Term("篇名", "浙江"));
 			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", analyzer);
-			Query q2 = qp2.parse("应用");
-			//Query q3 = new TermQuery(new Term("年", "2008"));
+			Query q2 = qp2.parse(papername);
 			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
-			Query q3 = qp3.parse("2008");
-			
+			Query q3 = qp3.parse(year);
 			BooleanQuery q = new BooleanQuery();
 			q.add(q1, Occur.MUST);
 			q.add(q2, Occur.MUST);
-			q.add(q3, Occur.MUST);
+			//q.add(q3, Occur.MUST);
 			//QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, new String[]{"作者", "篇名"}, new IKAnalyzer());
 			//Query q = parser.parse("创业");
 			System.out.println(q);
