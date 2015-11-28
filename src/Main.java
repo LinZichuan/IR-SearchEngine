@@ -102,18 +102,22 @@ public class Main extends HttpServlet{
 			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
 			//EstablishIndex(analyzer);
 			//构建query
-			String author = new String("张晓东      ").trim();
-			String papername = new String("应用    ").trim();
-			String year = new String("  2008        ").trim();
+			String author = new String("张晓东").trim();
+			String papername = new String("资本").trim();
+			String year = new String("2008").trim();
+			String newsname = new String("IT经理世界").trim();
 			Query q1 = new TermQuery(new Term("作者", author));
 			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", analyzer);
 			Query q2 = qp2.parse(papername);
 			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
 			Query q3 = qp3.parse(year);
+			QueryParser qp4 = new QueryParser(Version.LUCENE_35, "中文刊名", analyzer);
+			Query q4 = qp4.parse(newsname);
 			BooleanQuery q = new BooleanQuery();
-			q.add(q1, Occur.MUST);
+			//q.add(q1, Occur.MUST);
 			q.add(q2, Occur.MUST);
 			//q.add(q3, Occur.MUST);
+			q.add(q4, Occur.MUST);
 			//QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, new String[]{"作者", "篇名"}, new IKAnalyzer());
 			//Query q = parser.parse("创业");
 			System.out.println(q);
@@ -128,7 +132,6 @@ public class Main extends HttpServlet{
 				Document hitdoc = searcher.doc(hits[i].doc);
 				if (hitdoc.getField("作者") != null && hitdoc.getField("篇名") != null) {
 					System.out.println("作者：" + hitdoc.getField("作者").stringValue()
-							+ " 机构：" + hitdoc.getField("机构").stringValue()
 							+ " 篇名：" + hitdoc.getField("篇名").stringValue() 
 							+ " score=" + hits[i].score 
 							+ " docId=" + hits[i].doc);
