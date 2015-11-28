@@ -101,22 +101,27 @@ public class Main extends HttpServlet{
 			similarity = new MySimilarity();
 			Analyzer analyzer = new IKAnalyzer();//new StandardAnalyzer(Version.LUCENE_35); //
 			//EstablishIndex(analyzer);
-			//构建query
-			String author = new String("张晓东").trim();
-			String papername = new String("资本").trim();
-			String year = new String("2008").trim();
-			String newsname = new String("IT经理世界").trim();
+			//多域查询
+			//作者
+			String author = new String("叶丽雅").trim();  
 			Query q1 = new TermQuery(new Term("作者", author));
+			//标题
+			String title = new String("资本").trim();
 			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", analyzer);
-			Query q2 = qp2.parse(papername);
+			Query q2 = qp2.parse(title);
+			//时间范围
+			String year = new String("2008").trim();  
 			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
 			Query q3 = qp3.parse(year);
-			QueryParser qp4 = new QueryParser(Version.LUCENE_35, "中文刊名", analyzer);
-			Query q4 = qp4.parse(newsname);
+			//摘要
+			String summary = new String("民间").trim();  
+			QueryParser qp4 = new QueryParser(Version.LUCENE_35, "中文摘要", analyzer);
+			Query q4 = qp4.parse(title);
+			//布尔查询
 			BooleanQuery q = new BooleanQuery();
-			//q.add(q1, Occur.MUST);
+			q.add(q1, Occur.MUST);
 			q.add(q2, Occur.MUST);
-			//q.add(q3, Occur.MUST);
+			q.add(q3, Occur.MUST);
 			q.add(q4, Occur.MUST);
 			//QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, new String[]{"作者", "篇名"}, new IKAnalyzer());
 			//Query q = parser.parse("创业");
