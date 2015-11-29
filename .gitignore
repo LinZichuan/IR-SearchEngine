@@ -1,4 +1,5 @@
-/data/
+/data/index/*
+/data/*.txt
 /word2vec/
 /org/
 
