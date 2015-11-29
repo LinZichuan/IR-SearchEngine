@@ -18,7 +18,7 @@ public class MySimilarity extends Similarity{
       return (float)(1.0 / Math.sqrt(sumOfSquaredWeights));
       //return 1.0f;
     }  
-   
+    
     //term freq 表示 term 在一个document的出现次数,这里设置为1.0f表示不考滤这个因素影响  
     @Override  
     public float tf(float freq) {  
@@ -32,15 +32,15 @@ public class MySimilarity extends Similarity{
       return (float)1 / (distance + 1) ; /** Implemented as <code>1 / (distance + 1)</code>. */  
       //return 1.0f;  
     }  
-     
+    
     //这里表示匹配的docuemnt在全部document的影响因素,同理也不考滤  
     @Override  
     public float idf(int docFreq, int numDocs) {  
-      //return (float)Math.log((double)numDocs/(docFreq+1) + 1); /** Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. */  
-      return 1.0f;
+      return ((float)Math.log((double)numDocs/(docFreq+1)) + 1); /** Implemented as <code>log(numDocs/(docFreq+1)) + 1</code>. */  
+      //return 1.0f;
     }  
           
-    //这里表示每一个Document中所有匹配的关键字与当前关键字的匹配比例因素影响,同理也不考滤.  
+    //这里表示每一个Document中所有匹配的关键字与当前关键字的匹配比例因素影响,同理也不考滤.
     @Override  
     public float coord(int overlap, int maxOverlap) {
       return (float)overlap / (float)maxOverlap; /** Implemented as <code>overlap / maxOverlap</code>. */  

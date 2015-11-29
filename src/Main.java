@@ -45,7 +45,7 @@ public class Main extends HttpServlet{
 	public static void EstablishIndex(Analyzer analyzer) {
 		try{
 			IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-			writer.setSimilarity(similarity);   //设置相关度  
+			//writer.setSimilarity(similarity);   //设置相关度  
 			//构建Document并写入IndexWriter
 			File srcfile = new File("./data/CNKI_journal.txt");
 			StringBuffer buffer = new StringBuffer();
@@ -82,7 +82,8 @@ public class Main extends HttpServlet{
 						for (String author: authors) {
 							d.add(new Field(key, author, Field.Store.YES, Field.Index.NOT_ANALYZED));
 						}
-					} else {
+					} 
+					else {
 						d.add(new Field(key, val, Field.Store.YES, Field.Index.ANALYZED));
 					}
 				}
@@ -103,10 +104,10 @@ public class Main extends HttpServlet{
 			//EstablishIndex(analyzer);
 			//多域查询
 			//作者
-			String author = new String("耶").trim();  
+			String author = new String("汪涛").trim();
 			Query q1 = new TermQuery(new Term("作者", author));
 			//标题
-			String title = new String("建筑").trim();
+			String title = new String("计算").trim();
 			QueryParser qp2 = new QueryParser(Version.LUCENE_35, "篇名", analyzer);
 			Query q2 = qp2.parse(title);
 			//时间范围
@@ -114,21 +115,21 @@ public class Main extends HttpServlet{
 			QueryParser qp3 = new QueryParser(Version.LUCENE_35, "年", analyzer);
 			Query q3 = qp3.parse(year);
 			//摘要
-			String summary = new String("建筑").trim();  
+			String summary = new String("救赎").trim();  
 			QueryParser qp4 = new QueryParser(Version.LUCENE_35, "中文摘要", analyzer);
-			Query q4 = qp4.parse(title);
+			Query q4 = qp4.parse(summary);
 			//布尔查询
 			BooleanQuery q = new BooleanQuery();
 			q.add(q1, Occur.SHOULD);
-			q.add(q2, Occur.SHOULD);
+			q.add(q2, Occur.MUST);
 			q.add(q3, Occur.SHOULD);
-			q.add(q4, Occur.SHOULD);
+			q.add(q4, Occur.MUST);
 			//QueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, new String[]{"作者", "篇名"}, new IKAnalyzer());
 			//Query q = parser.parse("创业");
 			System.out.println(q);
 			//开始查询
 			IndexSearcher searcher = new IndexSearcher(dir);
-			searcher.setSimilarity(similarity); 
+			searcher.setSimilarity(similarity);   //设置相关度  
 			TopDocs td = searcher.search(q, null, 100);
 			int hitnum = td.totalHits;
 			System.out.println(hitnum);
